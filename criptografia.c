@@ -30,14 +30,6 @@ void generate_points(int a, int b, int p, Ponto **pontos, int *count) {
     }
 }
 
-int calculate_public_key(int private_key, int generator_x) {
-    return (private_key * generator_x);
-}
-
-int calculate_shared_key(int received_key, int private_key) {
-    return (received_key * private_key);
-}
-
 int main(int argc, char *argv[]) {
     if (argc != 4) {
         printf("Uso: %s <a> <b> <p>\n", argv[0]);
@@ -52,36 +44,44 @@ int main(int argc, char *argv[]) {
 
     generate_points(a, b, p, &pontos, &count);
 
-    if (count <= 2) {
-        printf("Não há pontos suficientes para selecionar G2.\n");
+    if (count <= 3) { 
+        printf("Não há pontos suficientes para selecionar dois geradores.\n");
         free(pontos);
         return 1;
     }
 
-    Ponto G = pontos[3];  
-    printf("\nGerador escolhido (G3): (%d, %d)\n", G.x, G.y);
+    long int alfa = 3;
+    long int beta = 9;
 
-    int alpha = 3;
-    int beta = 7;
+    int indice_alfa = (alfa % p);
+    int indice_beta = (beta % p);
 
-    int A = calculate_public_key(alpha, G.x);
-    int B = calculate_public_key(beta, G.x);
+    if (indice_alfa == 0) indice_alfa = 1;
+    if (indice_beta == 0) indice_beta = 1;
+    
+    Ponto A = pontos[indice_alfa];
+    Ponto B = pontos[indice_beta];
 
-    int shared_key_alice = calculate_shared_key(B, alpha);
-    int shared_key_bob = calculate_shared_key(A, beta);
+    long int alfa_beta = indice_beta * indice_alfa;
+    long int beta_alfa = indice_alfa * indice_beta;
 
-    printf("\nChave privada de Alice: %d\n", alpha);
-    printf("Chave privada de Bob: %d\n", beta);
-    printf("Chave pública de Alice: %d\n", A);
-    printf("Chave pública de Bob: %d\n", B);
-    printf("Chave compartilhada calculada por Alice: %d\n", shared_key_alice);
-    printf("Chave compartilhada calculada por Bob: %d\n", shared_key_bob);
+    int indice_beta_alfa = (beta_alfa % count);
+    int indice_alfa_beta = (alfa_beta % count);
+    
+    Ponto alfaB = pontos[indice_beta_alfa];
+    Ponto betaA = pontos[indice_alfa_beta];
+    
+    printf("\nChave privada de Alice: %ld\n", alfa);
+    printf("Chave privada de Bob: %ld\n", beta);
+    
+    printf("\nGerador escolhido para Alice (G%d): (%d, %d)\n", indice_alfa, A.x, A.y);
+    printf("Gerador escolhido para Bob (G%d): (%d, %d)\n", indice_beta, B.x, B.y);
 
-    if (shared_key_alice == shared_key_bob) {
-        printf("\n✅ Troca de chaves bem-sucedida! Chave compartilhada: %d\n", shared_key_alice);
-    } else {
-        printf("\n❌ Erro na troca de chaves!\n");
-    }
+    printf("\nNovo gerador escolhido para Alice (G%d): (%d, %d)\n", indice_alfa_beta, alfaB.x, alfaB.y);
+    printf("Novo gerador escolhido para Bob (G%d): (%d, %d)\n", indice_beta_alfa, betaA.x, betaA.y);
+
+    printf("\nA chave de Alice é: %d\n",alfaB.x);
+    printf("A chave de Bob é: %d\n",betaA.x);
 
     free(pontos);
     return 0;
