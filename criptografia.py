@@ -64,8 +64,6 @@ def main():
     print(f"\nGerador escolhido para Alice (G{indice_alfa}): ({A.x}, {A.y})")
     print(f"Gerador escolhido para Bob (G{indice_beta}): ({B.x}, {B.y})")
 
-    print(f"\n{indice_alfa * indice_beta}")
-
     print(f"\nNovo gerador escolhido para Alice (G{indice_alfa_beta}): ({alfaB.x}, {alfaB.y})")
     print(f"Novo gerador escolhido para Bob (G{indice_beta_alfa}): ({betaA.x}, {betaA.y})")
 
