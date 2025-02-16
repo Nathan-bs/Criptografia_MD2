@@ -5,9 +5,9 @@ class Ponto:
         self.x = x
         self.y = y
 
-def generate_points(a, b, p):
+def gerar_pontos(a, b, p):
     pontos = []
-    count = 1
+    ordem = 1
 
     print("\nPontos geradores na curva elíptica:")
 
@@ -15,10 +15,11 @@ def generate_points(a, b, p):
         for y in range(p):
             if (y * y) % p == (x * x * x + a * x + b) % p:
                 pontos.append(Ponto(x, y))
-                print(f"G{count} = ({x}, {y})")
-                count += 1
+                print(f"{ordem}G = ({x}, {y})")
+                ordem += 1
+    print(f"{ordem}G = O")        
 
-    return pontos, count
+    return pontos, ordem
 
 def main():
     if len(sys.argv) != 4:
@@ -29,14 +30,14 @@ def main():
     b = int(sys.argv[2])
     p = int(sys.argv[3])
 
-    pontos, count = generate_points(a, b, p)
+    pontos, ordem = gerar_pontos(a, b, p)
 
-    if count <= 3:
+    if ordem <= 3:
         print("Não há pontos suficientes para selecionar dois geradores.")
         return
 
-    alfa = 3
-    beta = 9
+    alfa = 113
+    beta = 109
 
     indice_alfa = alfa % p
     indice_beta = beta % p
@@ -52,8 +53,8 @@ def main():
     alfa_beta = indice_beta * indice_alfa
     beta_alfa = indice_alfa * indice_beta
 
-    indice_beta_alfa = beta_alfa % count
-    indice_alfa_beta = alfa_beta % count
+    indice_beta_alfa = beta_alfa % ordem
+    indice_alfa_beta = alfa_beta % ordem
 
     alfaB = pontos[indice_beta_alfa - 1]
     betaA = pontos[indice_alfa_beta - 1]
@@ -61,14 +62,16 @@ def main():
     print(f"\nChave privada de Alice: {alfa}")
     print(f"Chave privada de Bob: {beta}")
 
-    print(f"\nGerador escolhido para Alice (G{indice_alfa}): ({A.x}, {A.y})")
-    print(f"Gerador escolhido para Bob (G{indice_beta}): ({B.x}, {B.y})")
+    print(f"\nGerador escolhido para Alice ({indice_alfa}G): ({A.x}, {A.y}) / aG = A")
+    print(f"Gerador escolhido para Bob ({indice_beta}G): ({B.x}, {B.y}) / bG = BG")
 
-    print(f"\nNovo gerador escolhido para Alice (G{indice_alfa_beta}): ({alfaB.x}, {alfaB.y})")
-    print(f"Novo gerador escolhido para Bob (G{indice_beta_alfa}): ({betaA.x}, {betaA.y})")
+    print(f"\nNovo gerador escolhido para Alice ({indice_alfa_beta}G): ({alfaB.x}, {alfaB.y}) / aB = abG = R")
+    print(f"Novo gerador escolhido para Bob ({indice_beta_alfa}G): ({betaA.x}, {betaA.y}) / bA = baG = S")
 
     print(f"\nA chave de Alice é: {alfaB.x}")
     print(f"A chave de Bob é: {betaA.x}")
+
+    print(f"\nRx = Sx")
 
 if __name__ == "__main__":
     main()
