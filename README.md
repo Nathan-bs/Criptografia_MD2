@@ -14,48 +14,59 @@ Este projeto foi desenvolvido como parte da disciplina **Matemática Discreta 2*
 
 1. **Configuração da Curva Elíptica**  
    - Define-se a equação da curva:  
-     \[ y^2 \equiv x^3 + ax + b \pmod{p} \]
+     \[ y^2 = x^3 + ax + b  mod{p} \]
    - O usuário fornece os coeficientes \( a \), \( b \) e o módulo primo \( p \).
    - O programa calcula os pontos pertencentes à curva.
 
-2. **Geração de Chaves**  
-   - Alice escolhe uma chave privada \( \alpha \).
-   - Bob escolhe uma chave privada \( \beta \).
-   - O programa seleciona os geradores para Alice e Bob com base em \( \alpha \) e \( \beta \).
+2. **Escolha do Gerador**
+   - São escolhidos aleatoriamente 50 pontos que satisfazem a curva elíptica.
+   - Seleciona-se o de maior ordem e faz ele funcionar como gerador G.
+   - Faz-se repetidas somas em G, dadas por:
 
-3. **Cálculo das Chaves Públicas**  
-   - Alice calcula \( A = \alpha G \) e envia para Bob.
-   - Bob calcula \( B = \beta G \) e envia para Alice.
+         Para pontos diferentes: P != Q
+            s=(xQ​−xP)/(​yQ−yP) ​​mod p
 
-4. **Cálculo da Chave Compartilhada**  
-   - Alice recebe \( B \) e calcula \( P = \alpha B \).
-   - Bob recebe \( A \) e calcula \( P = \beta A \).
-   - Como \( \alpha B = \alpha \beta G \) e \( \beta A = \beta \alpha G \), ambos obtêm a mesma chave secreta.
+         Para pontos iguais: P = Q
+            s=(3xP²+a)/2yP mod p
 
-5. **Segurança**  
+         Soma: P + Q = R
+            xR=s²-xP-xQ mod p
+            yR=s(xP-xQ)-yP mod p
+
+3. **Geração de Chaves**  
+   - Alice escolhe uma chave privada \( alpha \).
+   - Bob escolhe uma chave privada \( beta \).
+   - O programa seleciona os pontos para Alice e Bob com base em \( alpha \) e \( beta \).
+
+4. **Cálculo das Chaves Públicas**  
+   - Alice calcula \( A = alpha.G \) e envia para Bob.
+   - Bob calcula \( B = beta.G \) e envia para Alice.
+
+5. **Cálculo da Chave Compartilhada**  
+   - Alice recebe \( B \) e calcula \( P = alpha.B \).
+   - Bob recebe \( A \) e calcula \( P = beta.A \).
+   - Como \( alpha.B = alpha.beta.G \) e \( beta.A = beta.alpha.G \), ambos obtêm a mesma chave secreta.
+
+6. **Segurança**  
    - Um atacante (Eve) pode ver os pontos públicos, mas não consegue calcular a chave secreta sem resolver o problema do logaritmo discreto em curvas elípticas, que é computacionalmente inviável para números grandes.
 
 ---
 
 ## 📜 Estrutura do Código
-- `ecc_dh.c`: Implementação do algoritmo de troca de chaves usando curvas elípticas.
+- `criptografia.py`: Implementação do algoritmo de troca de chaves usando curvas elípticas.
 - `README.md`: Documento explicativo do projeto.
 
 ---
 
-## 🚀 Como Compilar e Executar
+## 🚀 Como Executar
 
 ### 📥 Requisitos
-- Compilador GCC instalado no sistema.
+- Python 3.x instalado no sistema.
 
-### ⚙️ Compilação
-```sh
-gcc ecc_dh.c -o ecc_dh
-```
+### ⚙️ Execução
 
-### ▶️ Execução
 ```sh
-./ecc_dh <a> <b> <p>
+python criptografia.py <a> <b> <p>
 ```
 - `<a>`: Coeficiente da curva elíptica.
 - `<b>`: Coeficiente da curva elíptica.
@@ -63,21 +74,40 @@ gcc ecc_dh.c -o ecc_dh
 
 ### 📌 Exemplo de Execução
 ```sh
-./ecc_dh 2 3 17
+python criptografia.py 2 2 53
 ```
 
 ### 📌 Exemplo de Saída
 ```
 Pontos geradores na curva elíptica:
-G1 = (0, 6)
-G2 = (0, 11)
-G3 = (3, 1)
-...
-Novo gerador escolhido para Alice (G8): (6, 14)  
-Novo gerador escolhido para Bob (G8): (6, 14)  
+1g = (8, 0)
+2g = (9, 22)
+3g = (9, 31)
 
-A chave de Alice é: 6  
-A chave de Bob é: 6
+Ordens dos 50 pontos selecionados:
+Ordem do ponto 1G = (8, 0): 2
+Ordem do ponto 2G = (9, 22): 23
+Ordem do ponto 3G = (9, 31): 23
+Ordem do ponto 4G = (10, 11): 46
+
+Ponto de maior ordem encontrado: Ponto(10, 11), ordem = 46
+
+Múltiplos do Gerador
+1G = (10, 11)
+2G = (9, 22)
+3G = (49, 47)
+
+Chave privada de Alice: 3
+Chave privada de Bob: 9
+
+Gerador escolhido para Alice (3G): (49, 47)
+Gerador escolhido para Bob (9G): (28, 11)
+
+Novo gerador escolhido para Alice (27G): (16, 7)
+Novo gerador escolhido para Bob (27G): (16, 7)
+
+A chave de Alice é: 16
+A chave de Bob é: 16
 ```
 
 ---
@@ -91,8 +121,8 @@ A chave de Bob é: 6
 
 ## ⚠️ Observações
 - O código utiliza o cálculo modular para determinar os pontos na curva elíptica.
-- A escolha das chaves privadas \( \alpha \) e \( \beta \) é fixa no código, podendo ser ajustada para ser aleatória.
-- O algoritmo é funcional para curvas pequenas; para curvas maiores, considere otimizações na busca de pontos.
+- A escolha das chaves privadas \( alpha \) e \( beta \) é fixa no código, podendo ser ajustada para ser aleatória.
+- Escolha sempre p primo.
 
 ---
 
@@ -108,6 +138,5 @@ A chave de Bob é: 6
 
 ---
 
-## 📖 Referências
+## 📖 Referência
 - [Explicação sobre curvas elípticas](https://youtu.be/F3zzNa42-tQ?si=4DF7ktwa5LfQqshV)
-- Documentação do GCC: [https://gcc.gnu.org/](https://gcc.gnu.org/)
