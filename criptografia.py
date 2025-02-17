@@ -28,9 +28,8 @@ def gerar_pontos(a, b, p):
         for y in range(p):
             if (y * y) % p == (x * x * x + a * x + b) % p:
                 pontos.append(Ponto(x, y))
-                print(f"{ordem}G = ({x}, {y})")
-                ordem += 1
-    print(f"{ordem}G = O")        
+                print(f"{ordem}g = ({x}, {y})")
+                ordem += 1      
 
     return pontos, ordem
 
@@ -104,19 +103,20 @@ def main():
     
     print(f"\nPonto de maior ordem encontrado: {melhor_ponto}, ordem = {maior_ordem}")
     
-    print("\nMúltiplos do gerador até sua ordem:")
+    print("\nMúltiplos do Gerador")
     G = melhor_ponto
     Q = G
     multiplos_G = []
     for i in range(1, maior_ordem + 2):
         if Q is None:
-            print(f"{i}G = O (Ponto no Infinito)")
+            print(f"{i}G = O")
             break
         print(f"{i}G = ({Q.x}, {Q.y})")
         multiplos_G.append(Q)
         Q = soma_pontos(Q, G, a, p)
-    alfa = 113
-    beta = 109
+
+    alfa = 3
+    beta = 9
 
     indice_alfa = alfa % p
     indice_beta = beta % p
@@ -132,8 +132,8 @@ def main():
     alfa_beta = indice_beta * indice_alfa
     beta_alfa = indice_alfa * indice_beta
 
-    indice_beta_alfa = beta_alfa % ordem
-    indice_alfa_beta = alfa_beta % ordem
+    indice_beta_alfa = beta_alfa % (len(multiplos_G) + 1)
+    indice_alfa_beta = alfa_beta % (len(multiplos_G) + 1)
 
     alfaB = multiplos_G[indice_beta_alfa - 1]
     betaA = multiplos_G[indice_alfa_beta - 1]
@@ -141,20 +141,14 @@ def main():
     print(f"\nChave privada de Alice: {alfa}")
     print(f"Chave privada de Bob: {beta}")
 
-    print(f"\nGerador escolhido para Alice ({indice_alfa}G): ({A.x}, {A.y}) / aG = A")
-    print(f"Gerador escolhido para Bob ({indice_beta}G): ({B.x}, {B.y}) / bG = BG")
+    print(f"\nGerador escolhido para Alice ({indice_alfa}G): ({A.x}, {A.y})")
+    print(f"Gerador escolhido para Bob ({indice_beta}G): ({B.x}, {B.y})")
 
-    print(f"\nNovo gerador escolhido para Alice ({indice_alfa_beta}G): ({alfaB.x}, {alfaB.y}) / aB = abG = R")
-    print(f"Novo gerador escolhido para Bob ({indice_beta_alfa}G): ({betaA.x}, {betaA.y}) / bA = baG = S")
+    print(f"\nNovo gerador escolhido para Alice ({indice_alfa_beta}G): ({alfaB.x}, {alfaB.y})")
+    print(f"Novo gerador escolhido para Bob ({indice_beta_alfa}G): ({betaA.x}, {betaA.y})")
 
     print(f"\nA chave de Alice é: {alfaB.x}")
     print(f"A chave de Bob é: {betaA.x}")
-
-    print(f"\nRx = Sx")
-    
-    print("\nTodos os 50 pontos gerados:")
-    for i, ponto in enumerate(multiplos_G):
-        print(f"Ponto {i+1}: ({ponto.x}, {ponto.y})")
 
 if __name__ == "__main__":
     main()
