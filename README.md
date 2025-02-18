@@ -13,8 +13,10 @@ Este projeto foi desenvolvido como parte da disciplina **Matemática Discreta 2*
 ## 🔧 Funcionamento do Algoritmo
 
 1. **Configuração da Curva Elíptica**  
-   - Define-se a equação da curva:  
-     \[ y^2 = x^3 + ax + b  mod{p} \]
+   - Define-se a equação da curva:
+     
+         y² = x³ + ax + b  (mod p)
+     
    - O usuário fornece os coeficientes \( a \), \( b \) e o módulo primo \( p \).
    - O programa calcula os pontos pertencentes à curva.
 
